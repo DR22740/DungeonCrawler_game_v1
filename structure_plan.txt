@@ -1,0 +1,14 @@
+we need each item on a map be an object - a wall or a player. Wall has infinite HP but they can break! 
+Player is a subclass of an entity class.
+
+
+Mechanics:
+
+Sanity
+Sleeping checkpoints.
+
+There are checkpoints of ORBs that allow you to rest and they repell evil.
+If you do not set a checkpoint - your sanity decreases.
+The lower the sanity the more mobs will be in each consecutive level.
+When you reach insane - each mob gets unlimited damage. 
+Sanity resets once you get back to your checkpoint. 

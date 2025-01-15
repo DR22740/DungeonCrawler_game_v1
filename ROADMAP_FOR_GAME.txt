@@ -1,0 +1,11 @@
+File main: 
+Take inputs place all the entities 
+Intake inputs from the player 
+File entity - a class for either wall, player, mob. Mob can not move (temp) wall can not move, player can move (more entities yet to come)
+All the deviations of entity are subclasses
+projectile class - used by entity class.
+
+
+
+
+
