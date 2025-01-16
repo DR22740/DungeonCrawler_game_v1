@@ -16,15 +16,22 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-:: Compile main.cpp
-g++ -std=c++17 -c %srcdir%main.cpp -o %objdir%main.o %SDLinclude%
+:: Compile graphics.cpp
+g++ -std=c++17 -c %srcdir%graphics.cpp -o %objdir%graphics.o %SDLinclude%
 if %errorlevel% neq 0 (
-    echo Error compiling main.cpp
+    echo Error compiling graphics.cpp
     exit /b 1
 )
 
+:: Compile main.cpp
+@REM g++ -std=c++17 -c %srcdir%main.cpp -o %objdir%main.o %SDLinclude%
+@REM if %errorlevel% neq 0 (
+@REM     echo Error compiling main.cpp
+@REM     exit /b 1
+@REM )
+
 :: Link the program
-g++ %objdir%Entity.o %objdir%main.o -o main.exe %SDLlib%
+g++ %srcdir%main.cpp %objdir%graphics.o %objdir%Entity.o -o main.exe %SDLlib% %SDLinclude%
 if %errorlevel% neq 0 (
     echo Error linking the program
     exit /b 1

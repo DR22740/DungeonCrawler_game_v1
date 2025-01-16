@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <string>
 #include <iostream>
+#include "graphics.hpp"
 
 class Entity {
 private:
@@ -16,7 +17,7 @@ public:
 
     // Function to display "Hello, World!"
     void displayMessage() const;
-
+  
     // Getter for number
     int getXPos() const;
 
@@ -24,10 +25,9 @@ public:
     // Setter for number
     void setPosition(int newX, int newY);
 
-    void draw(SDL_Renderer* renderer) const;
+    void draw(SDL_Renderer* renderer, double angle) const;
     // Getter for text
-    std::string getPosText() const;
-
+    std::string getPosText() const; 
     // Setter for text
     // void setText(const std::string& str);
 };

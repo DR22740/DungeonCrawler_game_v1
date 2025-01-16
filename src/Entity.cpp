@@ -23,15 +23,30 @@ void Entity::setPosition(int newX, int newY) {
     x = newX;
     y = newY;
 }
-void Entity::draw(SDL_Renderer* renderer) const {
+#define topPoint 9
+#define bottomRight 3
+#define bottomLeft 3
+void Entity::draw(SDL_Renderer* renderer, double angle) const {
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, a); // Color
+
+    //make center 
+    SDL_RenderDrawPoint(renderer, this->getXPos(), this->getYPos());
+
+    SDL_SetRenderDrawColor(renderer, r, g, b, a); // Color
+    //TODO MAKE THEM ARGUMENT:
+    int objSize = 100;
+    // double angle = 0.0;
+    bool player = true;
+    //Angle of rotation (positive counterclockwise)
     // Set the render color for the entity
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
-
-    // Create a rectangle representing the entity
-    SDL_Rect rect = { x, y, width, height };
-
-    // Draw the rectangle
-    SDL_RenderFillRect(renderer, &rect);
+    
+    //default values: 
+    
+    if(player){
+        drawTriangle(renderer, objSize, this->getXPos(), this->getYPos(), angle);  
+    }
+     
 }
 // Getter for text
 std::string Entity::getPosText() const {

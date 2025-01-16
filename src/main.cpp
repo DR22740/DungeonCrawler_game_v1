@@ -1,17 +1,32 @@
 #define SDL_MAIN_HANDLED
-#include <Entity.hpp>
+#include "Entity.hpp"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
+#include <cmath>
 #include <iostream>
 
 // Screen dimensions
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 960;
 
 //create an instance of an entity: 
 // Entity entity(10, 10);  // Create an instance
+double calculateAngle(int xc, int yc, int xm, int ym){
+    // atan2(dy, dx) * (180.0 / M_PI);
+    // Calculate the angle in radians using atan2
+    double angleRadians = std::atan2(ym - yc, xm - xc);
 
+    // Convert radians to degrees
+    // double angleDegrees = angleRadians * (180.0 / M_PI);
+
+    // // Ensure the angle is in the range [0, 360)
+    // if (angleDegrees < 0) {
+    //     angleDegrees += 360.0;
+    // }
+
+    return angleRadians + 0.5*M_PI;
+}
 
 int main() {
     // entity.displayMessage();  
@@ -30,7 +45,7 @@ int main() {
 
     // Create SDL window
     SDL_Window* window = SDL_CreateWindow(
-        "Text Rendering", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        "Bruh game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN
     );
     if (!window) {
@@ -102,9 +117,11 @@ int main() {
     // Main loop
     bool isRunning = true;
     SDL_Event event;
-    Entity player(100, 100, 50, 50, 0, 255, 0, 255); // Green player
+                //x    y    w   h   r   b   g   a
+    Entity player(500, 500, 50, 50, 0, 255, 0, 255); // Green player
     Entity mob1(200, 150, 40, 40, 255, 0, 0, 255);  // Red mob
-    Entity mob2(300, 200, 30, 30, 0, 0, 255, 255);  // Blue mob
+    Entity wall1(300, 200, 30, 30, 0, 0, 255, 255);  // Blue wall
+
     while (isRunning) {
         // Handle events
         while (SDL_PollEvent(&event)) {
@@ -112,19 +129,33 @@ int main() {
                 isRunning = false;
             }
         }
-
+        
         // Clear the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
         SDL_RenderClear(renderer);
 
         // Render the text
         SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+        
+        // Get mouse position
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+
+
+        // std::cout << "Angle: (" << angle << ", Mouse position( x and y ) "<< mouseX << ", " << mouseY << ")" << std::endl;
+        // Draw mouse position on the screen
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White
+        SDL_RenderDrawPoint(renderer, mouseX, mouseY);
+            
+        // get the angle for drawing
+        double angle = calculateAngle(500, 500, mouseX, mouseY);
 
         //rendering all the mobs (should be a function later! TODO)
-        player.draw(renderer);
-        mob1.draw(renderer);
-        mob2.draw(renderer);
-        
+
+        player.draw(renderer, angle);
+        // mob1.draw(renderer, angle);
+        // wall1.draw(renderer, angle);
+
         // Draw a single pixel
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Red color
         SDL_RenderDrawPoint(renderer, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2); // Pixel at center of screen
