@@ -26,7 +26,7 @@ void Entity::setPosition(int newX, int newY) {
 #define topPoint 9
 #define bottomRight 3
 #define bottomLeft 3
-void Entity::draw(SDL_Renderer* renderer, double angle) const {
+void Entity::draw(SDL_Renderer* renderer, double angle, bool player, bool mob, bool wall) const {
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, a); // Color
 
@@ -38,7 +38,7 @@ void Entity::draw(SDL_Renderer* renderer, double angle) const {
     int objSize = 30;
     int length = 1;
     // double angle = 0.0;
-    bool player = true;
+    // bool player = true;
     //Angle of rotation (positive counterclockwise)
     // Set the render color for the entity
     
@@ -46,10 +46,12 @@ void Entity::draw(SDL_Renderer* renderer, double angle) const {
     
     if(player){
         // drawCircle(renderer, this->getXPos(), this->getYPos(), objSize/2);
-        drawTriangle(renderer, objSize, this->getXPos(), this->getYPos(), angle, length);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, a); // Color
-        length = 3;
-        drawTriangle(renderer, objSize, this->getXPos(), this->getYPos(), angle, length);
+        drawTriangle(renderer, objSize, this->getXPos(), this->getYPos(), angle, length, false);
+        
+        // length = 3;
+        drawTriangle(renderer, objSize, this->getXPos(), this->getYPos(), angle, length, true);
+    }else{//TODO make a distinguishable function for walls and mobs
+        drawCircle(renderer, this->getYPos(), this->getXPos(), 10);
     }
      
 }

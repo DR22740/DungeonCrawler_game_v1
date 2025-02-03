@@ -233,8 +233,8 @@ int main() {
 
         //rendering all the mobs (should be a function later! TODO)
 
-        player.draw(renderer, angle);
-        // mob1.draw(renderer, angle);
+        player.draw(renderer, angle, true, false, false);
+        mob1.draw(renderer, angle, false, true, false);
         // wall1.draw(renderer, angle);
 
         // Draw a single pixel

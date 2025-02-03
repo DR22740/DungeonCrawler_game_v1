@@ -80,15 +80,36 @@ void drawCircle(SDL_Renderer* renderer, int x, int y, int radius) {
     //     x++;
     // }
 }
-void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, double angle, int length){
+void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, double angle, int length, bool right){
 
-    int defBLX = defCX - objSize/3;
-    int defBLY = defCY + objSize/3;
-    int defTX = defCX;
-    int defTY = defCY - objSize/length;
-    int defBRX = defCX + objSize/3;
-    int defBRY = defCY + objSize/3;
-
+    // int defBLX = defCX - objSize/3;
+    // int defBLY = defCY + objSize/3;
+    // int defTX = defCX; //top x
+    // int defTY = defCY - objSize/length; //top y
+    // int defBRX = defCX + objSize/3;
+    // int defBRY = defCY + objSize/3;
+    //TODO here are preset points - make it an argument
+    int defBLX;
+    int defBLY;
+    int defTX;
+    int defTY;
+    int defBRX;
+    int defBRY; //top y
+    if(right == true){
+        defBLX = defCX;
+        defBLY = defCY - objSize/length; //top y
+        defTX = defCX;
+        defTY = defCY;
+        defBRX = defCX + objSize/3;
+        defBRY = defCY + objSize/3;
+    }else{
+        defBLX = defCX;
+        defBLY = defCY - objSize/length; //top y
+        defTX = defCX;
+        defTY = defCY;
+        defBRX = defCX - objSize/3;
+        defBRY = defCY + objSize/3;
+    }
     //Angle of rotation (positive counterclockwise)
     
     int x1 = ((defBLX - defCX)*cos(angle)) - ((defBLY-defCY)*sin(angle)) + defCX; 

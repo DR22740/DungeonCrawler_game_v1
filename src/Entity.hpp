@@ -25,7 +25,7 @@ public:
     // Setter for number
     void setPosition(int newX, int newY);
 
-    void draw(SDL_Renderer* renderer, double angle) const;
+    void draw(SDL_Renderer* renderer, double angle, bool player, bool mob, bool wall) const;
     // Getter for text
     std::string getPosText() const; 
     // Setter for text
