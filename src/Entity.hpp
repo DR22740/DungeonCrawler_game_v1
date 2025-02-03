@@ -10,7 +10,7 @@ private:
     int x, y; // Position of the entity
     int width, height; // Size of the entity
     Uint8 r, g, b, a; // Color of the entity       // Example variable
-
+    
 public:
     // Constructor
     Entity(int x, int y, int width, int height, Uint8 r, Uint8 g, Uint8 b, Uint8 a);

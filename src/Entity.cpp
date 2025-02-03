@@ -35,7 +35,8 @@ void Entity::draw(SDL_Renderer* renderer, double angle) const {
 
     SDL_SetRenderDrawColor(renderer, r, g, b, a); // Color
     //TODO MAKE THEM ARGUMENT:
-    int objSize = 100;
+    int objSize = 30;
+    int length = 1;
     // double angle = 0.0;
     bool player = true;
     //Angle of rotation (positive counterclockwise)
@@ -44,7 +45,11 @@ void Entity::draw(SDL_Renderer* renderer, double angle) const {
     //default values: 
     
     if(player){
-        drawTriangle(renderer, objSize, this->getXPos(), this->getYPos(), angle);  
+        // drawCircle(renderer, this->getXPos(), this->getYPos(), objSize/2);
+        drawTriangle(renderer, objSize, this->getXPos(), this->getYPos(), angle, length);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, a); // Color
+        length = 3;
+        drawTriangle(renderer, objSize, this->getXPos(), this->getYPos(), angle, length);
     }
      
 }

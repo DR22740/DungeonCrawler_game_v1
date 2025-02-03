@@ -45,12 +45,47 @@ void drawVerticalLine(SDL_Renderer * renderer, int y1, int y2, int x){
 
         }
 }
-void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, double angle){
+void drawCircle(SDL_Renderer* renderer, int x, int y, int radius) {
+    int limit = radius * radius;
+
+    for (int i = -radius; i< radius; i++){
+        for (int j =-radius; j<radius; j++){
+            if (( i*i) + (j*j) <limit){
+                SDL_RenderDrawPoint(renderer, x+i, y+j);
+            }
+        }
+    }
+    // int x = 0;
+    // int y = radius;
+    // int decision = 1 - radius; // Initial decision parameter
+    
+    // while (x <= y) {
+    //     // Draw the 8 symmetrical points
+    //     SDL_RenderDrawPoint(renderer, centerX + x, centerY + y); // Octant 1
+    //     SDL_RenderDrawPoint(renderer, centerX - x, centerY + y); // Octant 2
+    //     SDL_RenderDrawPoint(renderer, centerX + x, centerY - y); // Octant 3
+    //     SDL_RenderDrawPoint(renderer, centerX - x, centerY - y); // Octant 4
+    //     SDL_RenderDrawPoint(renderer, centerX + y, centerY + x); // Octant 5
+    //     SDL_RenderDrawPoint(renderer, centerX - y, centerY + x); // Octant 6
+    //     SDL_RenderDrawPoint(renderer, centerX + y, centerY - x); // Octant 7
+    //     SDL_RenderDrawPoint(renderer, centerX - y, centerY - x); // Octant 8
+
+    //     // Update decision parameter and coordinates
+    //     if (decision < 0) {
+    //         decision += 2 * x + 3;
+    //     } else {
+    //         decision += 2 * (x - y) + 5;
+    //         y--;
+    //     }
+    //     x++;
+    // }
+}
+void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, double angle, int length){
 
     int defBLX = defCX - objSize/3;
     int defBLY = defCY + objSize/3;
     int defTX = defCX;
-    int defTY = defCY - objSize;
+    int defTY = defCY - objSize/length;
     int defBRX = defCX + objSize/3;
     int defBRY = defCY + objSize/3;
 
@@ -120,9 +155,7 @@ void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, dou
         m23 = (float)(y3-y2)/(x3-x2);
     }
 
-    // std::cout << "Slope m12: " << m12 << std::endl;
-    // std::cout << "Slope m13: " << m13 << std::endl;
-    // std::cout << "Slope m23: " << m23 << std::endl;
+
     
     float startingY = (float)y1;
     float endingY = (float)y1;
@@ -130,28 +163,48 @@ void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, dou
     //set slope to int( so that each certain itteration there will be a pixel)
     int startingYRounded = y1;
     int endingYRounded = y1;
-    // if(m12 != inf){
-    //     for(int i = x1; i<x2; i++){
-    //         startingY+= m12;
-    //         endingY+= m13;
-    //         startingYRounded = (int)(startingY);
-    //         endingYRounded = (int)(endingY);
-    //         drawVerticalLine(renderer, startingYRounded, endingYRounded, i);
-    //     }
-    // }
+
     float startingSlope = m13;
     float endingSlope = m12;
 
-    for (int xCoordinate = x1; xCoordinate < x3; xCoordinate++) {
-        if(xCoordinate == x2){
-            endingSlope = m23;
+    if(m12 != inf){
+        for(int i = x1; i<x2; i++){
+            startingY+= m12;
+            endingY+= m13;
+            startingYRounded = (int)(startingY);
+            endingYRounded = (int)(endingY);
+            drawVerticalLine(renderer, startingYRounded, endingYRounded, i);
         }
-        startingY+= startingSlope;
-        endingY+= endingSlope;
-        startingYRounded = std::round(startingY);
-        endingYRounded = std::round(endingY);
-        drawVerticalLine(renderer, startingYRounded, endingYRounded, xCoordinate);
+    }else{
+        startingY = y2;
+        endingY = y1;
     }
+    //second loop:
+
+    if(m23 != inf){
+        for(int i = x2; i<x3; i++){
+            startingY+= m23;
+            endingY+= m13;
+            startingYRounded = (int)(startingY);
+            endingYRounded = (int)(endingY);
+            drawVerticalLine(renderer, startingYRounded, endingYRounded, i);
+        }
+    }
+    // for (int xCoordinate = x1; xCoordinate < x3; xCoordinate++) {
+    //     // if(m12 == inf){
+    //     //     xCoordinate = x2;// that will skip first loop
+            
+    //     // }
+    //     if(xCoordinate == x2){
+    //         endingSlope = m23;
+    //         startingY = 
+    //     }
+    //     startingY+= startingSlope;
+    //     endingY+= endingSlope;
+    //     startingYRounded = std::round(startingY);
+    //     endingYRounded = std::round(endingY);
+    //     drawVerticalLine(renderer, startingYRounded, endingYRounded, xCoordinate);
+    // }
 }
 // void drawWallHorizontal(){
 

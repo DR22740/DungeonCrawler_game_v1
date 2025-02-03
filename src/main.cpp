@@ -121,15 +121,96 @@ int main() {
     Entity player(500, 500, 50, 50, 0, 255, 0, 255); // Green player
     Entity mob1(200, 150, 40, 40, 255, 0, 0, 255);  // Red mob
     Entity wall1(300, 200, 30, 30, 0, 0, 255, 255);  // Blue wall
+    bool wKeyPressed = false;
+    bool sKeyPressed = false;
+    bool aKeyPressed = false;
+    bool dKeyPressed = false;
 
+    float trueSpeed = 2*0.70711;;
     while (isRunning) {
         // Handle events
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 isRunning = false;
             }
+            // Handle key events
+            if (event.type == SDL_KEYDOWN) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_w:
+                        std::cout << "W pressed: Move Up" << std::endl;
+                        wKeyPressed = true;
+                        break;
+                    case SDLK_a:
+                        std::cout << "A pressed: Move Left" << std::endl;
+                        aKeyPressed = true;
+                        break;
+                    case SDLK_s:
+                        std::cout << "S pressed: Move Down" << std::endl;
+                        sKeyPressed = true;
+                        break;
+                    case SDLK_d:
+                        std::cout << "D pressed: Move Right" << std::endl;
+                        dKeyPressed = true;
+                        break;
+                }
+            }
+
+            if (event.type == SDL_KEYUP) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_w:
+                        std::cout << "W released" << std::endl;
+                        wKeyPressed = false;
+                        break;
+                    case SDLK_a:
+                        std::cout << "A released" << std::endl;
+                        aKeyPressed = false;
+                        break;
+                    case SDLK_s:
+                        std::cout << "S released" << std::endl;
+                        sKeyPressed = false;
+                        break;
+                    case SDLK_d:
+                        std::cout << "D released" << std::endl;
+                        dKeyPressed = false;
+                        break;
+                }
+        
+            }
         }
         
+        //updating pos of player
+        if(wKeyPressed){
+            if(aKeyPressed || dKeyPressed){
+                
+                player.setPosition(player.getXPos(), player.getYPos() - (int)trueSpeed);
+            }else{
+                player.setPosition(player.getXPos(), player.getYPos() - 2);
+            }
+            
+        }
+        if(aKeyPressed){
+            if(wKeyPressed || sKeyPressed){
+                player.setPosition(player.getXPos()- (int)trueSpeed, player.getYPos());
+            }else{
+                player.setPosition(player.getXPos()-2, player.getYPos());
+            }
+        }
+        if(sKeyPressed){
+            if(aKeyPressed || dKeyPressed){
+                player.setPosition(player.getXPos(), player.getYPos() + (int)trueSpeed);
+            }else{
+                player.setPosition(player.getXPos(), player.getYPos() + 2);
+            }
+        }
+        if(dKeyPressed){
+            if(wKeyPressed || sKeyPressed){
+                player.setPosition(player.getXPos()+(int)trueSpeed, player.getYPos());
+            }else{
+                player.setPosition(player.getXPos()+2, player.getYPos());
+            }
+        }
+
+
         // Clear the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
         SDL_RenderClear(renderer);
@@ -148,7 +229,7 @@ int main() {
         SDL_RenderDrawPoint(renderer, mouseX, mouseY);
             
         // get the angle for drawing
-        double angle = calculateAngle(500, 500, mouseX, mouseY);
+        double angle = calculateAngle(player.getXPos(), player.getYPos(), mouseX, mouseY);
 
         //rendering all the mobs (should be a function later! TODO)
 
