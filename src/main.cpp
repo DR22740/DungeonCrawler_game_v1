@@ -124,95 +124,45 @@ int main() {
     Player player(500, 500);
     Mob mob1(200, 150);
     Wall wall1(300, 200);
+
     bool wKeyPressed = false;
     bool sKeyPressed = false;
     bool aKeyPressed = false;
     bool dKeyPressed = false;
 
-    float trueSpeed = 2*0.70711;;
+    float normalSpeed = 3.0f;
+    float diagonalSpeed = normalSpeed * 0.70711f;
+
     while (isRunning) {
-        // Handle events
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                isRunning = false;
-            }
-            // Handle key events
+            if (event.type == SDL_QUIT) isRunning = false;
+            
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
-                    case SDLK_w:
-                        std::cout << "W pressed: Move Up" << std::endl;
-                        wKeyPressed = true;
-                        break;
-                    case SDLK_a:
-                        std::cout << "A pressed: Move Left" << std::endl;
-                        aKeyPressed = true;
-                        break;
-                    case SDLK_s:
-                        std::cout << "S pressed: Move Down" << std::endl;
-                        sKeyPressed = true;
-                        break;
-                    case SDLK_d:
-                        std::cout << "D pressed: Move Right" << std::endl;
-                        dKeyPressed = true;
-                        break;
+                    case SDLK_w: wKeyPressed = true; break;
+                    case SDLK_a: aKeyPressed = true; break;
+                    case SDLK_s: sKeyPressed = true; break;
+                    case SDLK_d: dKeyPressed = true; break;
                 }
             }
-
             if (event.type == SDL_KEYUP) {
                 switch (event.key.keysym.sym) {
-                    case SDLK_w:
-                        std::cout << "W released" << std::endl;
-                        wKeyPressed = false;
-                        break;
-                    case SDLK_a:
-                        std::cout << "A released" << std::endl;
-                        aKeyPressed = false;
-                        break;
-                    case SDLK_s:
-                        std::cout << "S released" << std::endl;
-                        sKeyPressed = false;
-                        break;
-                    case SDLK_d:
-                        std::cout << "D released" << std::endl;
-                        dKeyPressed = false;
-                        break;
+                    case SDLK_w: wKeyPressed = false; break;
+                    case SDLK_a: aKeyPressed = false; break;
+                    case SDLK_s: sKeyPressed = false; break;
+                    case SDLK_d: dKeyPressed = false; break;
                 }
-        
             }
         }
         
-        //updating pos of player
-        if(wKeyPressed){
-            if(aKeyPressed || dKeyPressed){
-                
-                player.setPosition(player.getXPos(), player.getYPos() - (int)trueSpeed);
-            }else{
-                player.setPosition(player.getXPos(), player.getYPos() - 2);
-            }
-            
-        }
-        if(aKeyPressed){
-            if(wKeyPressed || sKeyPressed){
-                player.setPosition(player.getXPos()- (int)trueSpeed, player.getYPos());
-            }else{
-                player.setPosition(player.getXPos()-2, player.getYPos());
-            }
-        }
-        if(sKeyPressed){
-            if(aKeyPressed || dKeyPressed){
-                player.setPosition(player.getXPos(), player.getYPos() + (int)trueSpeed);
-            }else{
-                player.setPosition(player.getXPos(), player.getYPos() + 2);
-            }
-        }
-        if(dKeyPressed){
-            if(wKeyPressed || sKeyPressed){
-                player.setPosition(player.getXPos()+(int)trueSpeed, player.getYPos());
-            }else{
-                player.setPosition(player.getXPos()+2, player.getYPos());
-            }
-        }
-
+        float moveSpeed = (wKeyPressed || sKeyPressed) && (aKeyPressed || dKeyPressed) ? diagonalSpeed : normalSpeed;
+        
+        if (wKeyPressed) player.setPosition(player.getXPos(), player.getYPos() - (int)std::round(moveSpeed));
+        if (aKeyPressed) player.setPosition(player.getXPos() - (int)std::round(moveSpeed), player.getYPos());
+        if (sKeyPressed) player.setPosition(player.getXPos(), player.getYPos() + (int)std::round(moveSpeed));
+        if (dKeyPressed) player.setPosition(player.getXPos() + (int)std::round(moveSpeed), player.getYPos());
+        
+        std::cout << "Player Speed: " << moveSpeed << std::endl;
 
         // Clear the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
@@ -251,7 +201,7 @@ int main() {
     }
 
     // Cleanup
-    SDL_DestroyTexture(textTexture);
+
     TTF_CloseFont(font);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
