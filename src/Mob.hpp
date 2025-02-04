@@ -6,8 +6,8 @@
 
 class Mob : public Entity {
 public:
-    Mob(int x, int y);
-    void draw(SDL_Renderer* renderer, double angle) const override;
+    Mob(int x, int y, int width);
+    void draw(SDL_Renderer* renderer) const override;
 };
 
 #endif // MOB_HPP

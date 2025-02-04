@@ -14,11 +14,11 @@ protected:
     Uint8 r, g, b, a; // Color
 
 public:
-    Entity(int x, int y, int width, int height, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+    Entity(int x, int y, int width, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
     int getXPos() const;
     int getYPos() const;
     void setPosition(int newX, int newY);
-    virtual void draw(SDL_Renderer* renderer, double angle) const = 0;
+    virtual void draw(SDL_Renderer* renderer) const = 0;
     virtual ~Entity() {}
 };
 

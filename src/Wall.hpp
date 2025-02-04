@@ -7,7 +7,7 @@
 class Wall : public Entity {
 public:
     Wall(int x, int y);
-    void draw(SDL_Renderer* renderer, double angle) const override;
+    void draw(SDL_Renderer* renderer) const override;
 };
 
 #endif // WALL_HPP

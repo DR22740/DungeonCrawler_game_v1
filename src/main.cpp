@@ -122,7 +122,7 @@ int main() {
     SDL_Event event;
                 //x    y    w   h   r   b   g   a
     Player player(500, 500);
-    Mob mob1(200, 150);
+    Mob mob1(200, 150, 30);
     Wall wall1(300, 200);
 
     bool wKeyPressed = false;
@@ -187,7 +187,7 @@ int main() {
         //rendering all the mobs (should be a function later! TODO)
 
         player.draw(renderer, angle);
-        mob1.draw(renderer, angle);
+        mob1.draw(renderer);
         // wall1.draw(renderer, angle);
         // wall1.draw(renderer, angle);
 

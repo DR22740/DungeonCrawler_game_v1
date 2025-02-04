@@ -9,3 +9,10 @@ projectile class - used by entity class.
 
 
 
+CURRENT TODO:
+
+Add hitboxes. When ANYTHING moves it has to itterate through the list
+of all the entities on map and check collision (if its inside the values of any entity)
+
+Add wall quare drawing for wall (its a rectangle maybe)
+
