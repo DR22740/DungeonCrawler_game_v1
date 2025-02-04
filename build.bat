@@ -16,6 +16,27 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+:: Compile Player.cpp
+g++ -std=c++17 -c %srcdir%\Player.cpp -o %objdir%\Player.o %SDLinclude%
+if %errorlevel% neq 0 (
+    echo Error compiling Player.cpp
+    exit /b 1
+)
+
+:: Compile Mob.cpp
+g++ -std=c++17 -c %srcdir%\Mob.cpp -o %objdir%\Mob.o %SDLinclude%
+if %errorlevel% neq 0 (
+    echo Error compiling Mob.cpp
+    exit /b 1
+)
+
+:: Compile Wall.cpp
+g++ -std=c++17 -c %srcdir%\Wall.cpp -o %objdir%\Wall.o %SDLinclude%
+if %errorlevel% neq 0 (
+    echo Error compiling Wall.cpp
+    exit /b 1
+)
+
 :: Compile graphics.cpp
 g++ -std=c++17 -c %srcdir%\graphics.cpp -o %objdir%\graphics.o %SDLinclude%
 if %errorlevel% neq 0 (
@@ -31,7 +52,7 @@ if %errorlevel% neq 0 (
 )
 
 :: Link the program
-g++ %objdir%\main.o %objdir%\graphics.o %objdir%\Entity.o -o main.exe %SDLlib% %SDLinclude%
+g++ %objdir%\main.o %objdir%\graphics.o %objdir%\Entity.o %objdir%\Player.o %objdir%\Mob.o %objdir%\Wall.o -o main.exe %SDLlib% %SDLinclude%
 if %errorlevel% neq 0 (
     echo Error linking the program
     exit /b 1

@@ -1,5 +1,8 @@
+/* main.cpp */
 #define SDL_MAIN_HANDLED
-#include "Entity.hpp"
+#include "Player.hpp"
+#include "Mob.hpp"
+#include "Wall.hpp"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
@@ -118,9 +121,9 @@ int main() {
     bool isRunning = true;
     SDL_Event event;
                 //x    y    w   h   r   b   g   a
-    Entity player(500, 500, 50, 50, 0, 255, 0, 255); // Green player
-    Entity mob1(200, 150, 40, 40, 255, 0, 0, 255);  // Red mob
-    Entity wall1(300, 200, 30, 30, 0, 0, 255, 255);  // Blue wall
+    Player player(500, 500);
+    Mob mob1(200, 150);
+    Wall wall1(300, 200);
     bool wKeyPressed = false;
     bool sKeyPressed = false;
     bool aKeyPressed = false;
@@ -233,8 +236,9 @@ int main() {
 
         //rendering all the mobs (should be a function later! TODO)
 
-        player.draw(renderer, angle, true, false, false);
-        mob1.draw(renderer, angle, false, true, false);
+        player.draw(renderer, angle);
+        mob1.draw(renderer, angle);
+        // wall1.draw(renderer, angle);
         // wall1.draw(renderer, angle);
 
         // Draw a single pixel

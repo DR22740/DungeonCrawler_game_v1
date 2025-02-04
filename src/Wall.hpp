@@ -1,0 +1,13 @@
+/* Wall.hpp */
+#ifndef WALL_HPP
+#define WALL_HPP
+
+#include "Entity.hpp"
+
+class Wall : public Entity {
+public:
+    Wall(int x, int y);
+    void draw(SDL_Renderer* renderer, double angle) const override;
+};
+
+#endif // WALL_HPP
