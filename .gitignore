@@ -8,4 +8,5 @@
 *.log
 *.tmp
 
-
+#ignore the god damn ROADMAP:
+ROADMAP_FOR_GAME.txt
