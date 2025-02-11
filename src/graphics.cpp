@@ -2,9 +2,6 @@
 #include <iostream>
 #include <cmath> // For sqrt
 #include "graphics.hpp"
-#define topPoint 9
-#define bottomRight 3
-#define bottomLeft 3
 #include <array>
 
 void swap(int * var1, int * var2){
