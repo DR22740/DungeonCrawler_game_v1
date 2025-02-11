@@ -4,10 +4,10 @@ del *.o
 del main.exe
 
 :: Dynamically set paths
-set srcdir=%CD%\src
-set objdir=%CD%\src
-set SDLinclude=-I%CD%\SDL2\include\SDL2 -I%CD%\SDL2_ttf\x86_64-w64-mingw32\include\SDL2 -I%srcdir%
-set SDLlib=-L%CD%\SDL2\lib -L%CD%\SDL2_ttf\x86_64-w64-mingw32\lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
+set srcdir=src
+set objdir=src
+set SDLinclude=-ISDL2\include\SDL2 -ISDL2_ttf\x86_64-w64-mingw32\include\SDL2 -I%srcdir%
+set SDLlib=-LSDL2\lib -LSDL2_ttf\x86_64-w64-mingw32\lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 
 :: Compile Entity.cpp
 g++ -std=c++17 -c %srcdir%\Entity.cpp -o %objdir%\Entity.o %SDLinclude%
