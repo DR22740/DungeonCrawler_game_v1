@@ -6,7 +6,7 @@
 
 class Wall : public Entity {
 public:
-    Wall(int x, int y);
+    Wall(int x, int y, int width);
     void draw(SDL_Renderer* renderer) const override;
 };
 

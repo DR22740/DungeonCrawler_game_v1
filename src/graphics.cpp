@@ -5,7 +5,7 @@
 #define topPoint 9
 #define bottomRight 3
 #define bottomLeft 3
-
+#include <array>
 
 void swap(int * var1, int * var2){
     int temp = *var1;
@@ -80,6 +80,15 @@ void drawCircle(SDL_Renderer* renderer, int x, int y, int radius) {
     //     x++;
     // }
 }
+void drawSquare(SDL_Renderer* renderer, int objSize, int x1, int y1){
+    int endingY = y1 - objSize/2;
+    int startingY = y1 +  objSize/2;
+
+    for(int x = (x1-objSize/2); x<(x1+objSize/2); x++){
+        drawVerticalLine(renderer, startingY, endingY, x);
+    }
+}
+
 void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, double angle, int length, bool right){
 
     // int defBLX = defCX - objSize/3;

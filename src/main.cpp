@@ -8,7 +8,7 @@
 #include <string>
 #include <cmath>
 #include <iostream>
-
+#include <array>
 // Screen dimensions
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 960;
@@ -79,12 +79,11 @@ int main() {
         return 1;
     }
 
+
     // Get the text to display
     std::string displayedTextPos = "Okbro";
-
     // Set the text color
     SDL_Color textColor = {255, 255, 255, 255}; // White color
-
     // Create a surface with the text
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, displayedTextPos.c_str(), textColor);
     if (!textSurface) {
@@ -96,7 +95,6 @@ int main() {
         SDL_Quit();
         return 1;
     }
-
     // Create a texture from the surface
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     SDL_FreeSurface(textSurface);
@@ -109,21 +107,20 @@ int main() {
         SDL_Quit();
         return 1;
     }
-
     // Get text dimensions
     int textWidth, textHeight;
     SDL_QueryTexture(textTexture, NULL, NULL, &textWidth, &textHeight);
-
     // Position the text
     SDL_Rect textRect = {20, 20, textWidth, textHeight}; // Top-left corner at (20, 20)
+
 
     // Main loop
     bool isRunning = true;
     SDL_Event event;
-                //x    y    w   h   r   b   g   a
-    Player player(500, 500);
-    Mob mob1(200, 150, 30);
-    Wall wall1(300, 200);
+    //player and mob starting positions and initializers
+    Player player(500, 500, 20);
+    Mob mob1(200, 150, 10);
+    Wall wall1(300, 200, 10);
 
     bool wKeyPressed = false;
     bool sKeyPressed = false;
@@ -133,7 +130,7 @@ int main() {
     float normalSpeed = 3.0f;
     float diagonalSpeed = normalSpeed * 0.70711f;
 
-    while (isRunning) {
+    while (isRunning) { // main loop
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) isRunning = false;
             
@@ -161,8 +158,6 @@ int main() {
         if (aKeyPressed) player.setPosition(player.getXPos() - (int)std::round(moveSpeed), player.getYPos());
         if (sKeyPressed) player.setPosition(player.getXPos(), player.getYPos() + (int)std::round(moveSpeed));
         if (dKeyPressed) player.setPosition(player.getXPos() + (int)std::round(moveSpeed), player.getYPos());
-        
-        std::cout << "Player Speed: " << moveSpeed << std::endl;
 
         // Clear the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
@@ -184,17 +179,20 @@ int main() {
         // get the angle for drawing
         double angle = calculateAngle(player.getXPos(), player.getYPos(), mouseX, mouseY);
 
-        //rendering all the mobs (should be a function later! TODO)
 
+
+        //rendering all the mobs (should be a function later! TODO)
         player.draw(renderer, angle);
         mob1.draw(renderer);
-        // wall1.draw(renderer, angle);
+        wall1.draw(renderer);
         // wall1.draw(renderer, angle);
 
+// REMOVE-------------------------------------
         // Draw a single pixel
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Red color
         SDL_RenderDrawPoint(renderer, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2); // Pixel at center of screen
-        
+// REMOVE-------------------------------------
+
         // Present the updated screen
         SDL_RenderPresent(renderer);
         SDL_Delay(16); // Limit to ~60 FPS

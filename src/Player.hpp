@@ -7,10 +7,12 @@
 
 class Player : public Entity {
 public:
-    Player(int x, int y);
+    Player(int x, int y, int width);
 
-    void draw(SDL_Renderer* renderer) const override;  // Overrides Entity
+    
     void draw(SDL_Renderer* renderer, double angle) const;  // Overloaded version
+private:
+    void draw(SDL_Renderer* renderer) const override;  // Overrides Entity
 };
 
 #endif // PLAYER_HPP

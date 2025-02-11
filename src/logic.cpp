@@ -1,0 +1,1 @@
+//on each itteration of gameloop we need to check if there is a collision, decrease health if there is, etc.W

@@ -6,7 +6,7 @@
 #include <string>
 #include <iostream>
 #include "graphics.hpp"
-
+#include <array>
 class Entity {
 protected:
     int x, y; // Position
@@ -18,7 +18,8 @@ public:
     int getXPos() const;
     int getYPos() const;
     void setPosition(int newX, int newY);
-    virtual void draw(SDL_Renderer* renderer) const = 0;
+    virtual void draw(SDL_Renderer* renderer) const {}
+    std::array<int, 4> calculateHitbox(int x, int y, int width);
     virtual ~Entity() {}
 };
 
