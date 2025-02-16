@@ -86,6 +86,199 @@ void drawSquare(SDL_Renderer* renderer, int objSize, int x1, int y1){
     }
 }
 
+void drawLine(SDL_Renderer* renderer, int x1, int y1, int x2, int y2) {
+    int dx = abs(x2 - x1), sx = (x1 < x2) ? 1 : -1;
+    int dy = -abs(y2 - y1), sy = (y1 < y2) ? 1 : -1;
+    int err = dx + dy, e2; 
+
+    while (true) {
+        SDL_RenderDrawPoint(renderer, x1, y1);  
+        if (x1 == x2 && y1 == y2) break;  
+        e2 = 2 * err;
+        if (e2 >= dy) { err += dy; x1 += sx; }  
+        if (e2 <= dx) { err += dx; y1 += sy; }  
+    }
+}
+
+void drawTriangleWithThreePoints(SDL_Renderer* renderer, int x1, int y1, int x2, int y2, int x3, int y3) {
+    // Draw the three edges of the triangle
+    drawLine(renderer, x1, y1, x2, y2);
+    drawLine(renderer, x2, y2, x3, y3);
+    drawLine(renderer, x3, y3, x1, y1);
+
+    // Fill the triangle using algorithm
+    if (x1 > x2) { swap(&x1, &x2); swap(&y1, &y2); }
+    if (x1 > x3) { swap(&x1, &x3); swap(&y1, &y3); }
+    if (x2 > x3) { swap(&x2, &x3); swap(&y2, &y3); }
+
+    float m12 = (x2 == x1) ? 1e10 : (float)(y2 - y1) / (x2 - x1);
+    float m13 = (x3 == x1) ? 1e10 : (float)(y3 - y1) / (x3 - x1);
+    float m23 = (x3 == x2) ? 1e10 : (float)(y3 - y2) / (x3 - x2);
+
+    float startY = y1;
+    float endY = y1;
+
+    for (int x = x1; x < x2; x++) {
+        startY += m12;
+        endY += m13;
+        drawVerticalLine(renderer, (int)startY, (int)endY, x);
+    }
+    startY = y2;
+    endY = y1;
+
+    for (int x = x2; x < x3; x++) {
+        startY += m23;
+        endY += m13;
+        drawVerticalLine(renderer, (int)startY, (int)endY, x);
+    }
+}
+void drawVisionTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, double angle, int length){
+
+    int defBLX = defCX - objSize/3;
+    int defBLY = defCY + objSize/3;
+    int defTX = defCX; //top x
+    int defTY = defCY - objSize/length; //top y
+    int defBRX = defCX + objSize/3;
+    int defBRY = defCY + objSize/3;
+    //TODO here are preset points - make it an argument
+    // int defBLX;
+    // int defBLY;
+    // int defTX;
+    // int defTY;
+    // int defBRX;
+    // int defBRY; //top y
+    // if(right == true){
+    //     defBLX = defCX;
+    //     defBLY = defCY - objSize/length; //top y
+    //     defTX = defCX;
+    //     defTY = defCY;
+    //     defBRX = defCX + objSize/3;
+    //     defBRY = defCY + objSize/3;
+    // }else{
+    //     defBLX = defCX;
+    //     defBLY = defCY - objSize/length; //top y
+    //     defTX = defCX;
+    //     defTY = defCY;
+    //     defBRX = defCX - objSize/3;
+    //     defBRY = defCY + objSize/3;
+    // }
+    //Angle of rotation (positive counterclockwise)
+    
+    int x1 = ((defBLX - defCX)*cos(angle)) - ((defBLY-defCY)*sin(angle)) + defCX; //bottom left corner after rotation
+    int y1 = ((defBLX - defCX)*sin(angle)) + ((defBLY-defCY)*cos(angle)) + defCY; //bottom left corner after rotation
+    int x2 = ((defTX - defCX)*cos(angle)) - ((defTY-defCY)*sin(angle)) + defCX;  //top vortex after rotation
+    int y2 = ((defTX - defCX)*sin(angle)) + ((defTY-defCY)*cos(angle)) + defCY; //top vortex after rotation
+    int x3 = ((defBRX - defCX)*cos(angle)) - ((defBRY-defCY)*sin(angle)) + defCX;  //bottom right corner after rotation
+    int y3 = ((defBRX - defCX)*sin(angle)) + ((defBRY-defCY)*cos(angle)) + defCY;   //bottom right corner after rotation
+    //plot the tree points
+    SDL_RenderDrawPoint(renderer, x1, y1);
+    SDL_RenderDrawPoint(renderer, x2, y2);
+    SDL_RenderDrawPoint(renderer, x3, y3);
+
+
+    //find highest and lowest y and x and move up 
+    //line 1:
+    // rise/run = y2- y1 /  x2 - x1
+    //find points on the line
+    //we find it for the first line and we have first relation 
+    //this is the first set of restrictions
+    //line 2: 
+    //we make 2nd set of restrictions (which )
+    //line 3: 
+    //we make 3rd set of restrictions
+
+    //once we have all 
+
+    //TODO - set a function to decide on which side of the LINE (inside or outside the triangle)
+    //TODO - make sure you check if it is inside the triangle (its ok if it does not draw)
+    
+    if(x1 > x2){
+        swap(&x1, &x2);
+        swap(&y1, &y2);
+    }
+    if(x1 > x3){
+        swap(&x1, &x3);
+        swap(&y1, &y3);
+    }
+    if(x2 > x3){
+        swap(&x2, &x3);
+        swap(&y2, &y3);
+    }
+    //TODO if x1 = x2 
+    //freakyyyy
+    float m12;
+    float m13;
+    float m23;
+
+    #define inf 1e10
+
+    if(x2==x1){
+        m12 = inf;
+    }else{
+        m12 = (float)(y2-y1)/(x2-x1);
+    }
+    if(x3==x1){
+        m13 = inf;
+    }else{
+        m13 = (float)(y3-y1)/(x3-x1);
+    }
+    if(x3==x2){
+        m23 = inf;
+    }else{
+        m23 = (float)(y3-y2)/(x3-x2);
+    }
+
+
+    
+    float startingY = (float)y1;
+    float endingY = (float)y1;
+
+    //set slope to int( so that each certain itteration there will be a pixel)
+    int startingYRounded = y1;
+    int endingYRounded = y1;
+
+    float startingSlope = m13;
+    float endingSlope = m12;
+
+    if(m12 != inf){
+        for(int i = x1; i<x2; i++){
+            startingY+= m12;
+            endingY+= m13;
+            startingYRounded = (int)(startingY);
+            endingYRounded = (int)(endingY);
+            drawVerticalLine(renderer, startingYRounded, endingYRounded, i);
+        }
+    }else{
+        startingY = y2;
+        endingY = y1;
+    }
+    //second loop:
+
+    if(m23 != inf){
+        for(int i = x2; i<x3; i++){
+            startingY+= m23;
+            endingY+= m13;
+            startingYRounded = (int)(startingY);
+            endingYRounded = (int)(endingY);
+            drawVerticalLine(renderer, startingYRounded, endingYRounded, i);
+        }
+    }
+    // for (int xCoordinate = x1; xCoordinate < x3; xCoordinate++) {
+    //     // if(m12 == inf){
+    //     //     xCoordinate = x2;// that will skip first loop
+            
+    //     // }
+    //     if(xCoordinate == x2){
+    //         endingSlope = m23;
+    //         startingY = 
+    //     }
+    //     startingY+= startingSlope;
+    //     endingY+= endingSlope;
+    //     startingYRounded = std::round(startingY);
+    //     endingYRounded = std::round(endingY);
+    //     drawVerticalLine(renderer, startingYRounded, endingYRounded, xCoordinate);
+    // }
+}
 void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, double angle, int length, bool right){
 
     // int defBLX = defCX - objSize/3;
@@ -118,12 +311,12 @@ void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, dou
     }
     //Angle of rotation (positive counterclockwise)
     
-    int x1 = ((defBLX - defCX)*cos(angle)) - ((defBLY-defCY)*sin(angle)) + defCX; 
-    int y1 = ((defBLX - defCX)*sin(angle)) + ((defBLY-defCY)*cos(angle)) + defCY;
-    int x2 = ((defTX - defCX)*cos(angle)) - ((defTY-defCY)*sin(angle)) + defCX;
-    int y2 = ((defTX - defCX)*sin(angle)) + ((defTY-defCY)*cos(angle)) + defCY;
-    int x3 = ((defBRX - defCX)*cos(angle)) - ((defBRY-defCY)*sin(angle)) + defCX; 
-    int y3 = ((defBRX - defCX)*sin(angle)) + ((defBRY-defCY)*cos(angle)) + defCY;
+    int x1 = ((defBLX - defCX)*cos(angle)) - ((defBLY-defCY)*sin(angle)) + defCX; //bottom left corner after rotation
+    int y1 = ((defBLX - defCX)*sin(angle)) + ((defBLY-defCY)*cos(angle)) + defCY; //bottom left corner after rotation
+    int x2 = ((defTX - defCX)*cos(angle)) - ((defTY-defCY)*sin(angle)) + defCX;  //top vortex after rotation
+    int y2 = ((defTX - defCX)*sin(angle)) + ((defTY-defCY)*cos(angle)) + defCY; //top vortex after rotation
+    int x3 = ((defBRX - defCX)*cos(angle)) - ((defBRY-defCY)*sin(angle)) + defCX;  //bottom right corner after rotation
+    int y3 = ((defBRX - defCX)*sin(angle)) + ((defBRY-defCY)*cos(angle)) + defCY;   //bottom right corner after rotation
     //plot the tree points
     SDL_RenderDrawPoint(renderer, x1, y1);
     SDL_RenderDrawPoint(renderer, x2, y2);
@@ -145,7 +338,7 @@ void drawTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, dou
 
     //TODO - set a function to decide on which side of the LINE (inside or outside the triangle)
     //TODO - make sure you check if it is inside the triangle (its ok if it does not draw)
-    //the key is bresenhams algorithm
+    
     if(x1 > x2){
         swap(&x1, &x2);
         swap(&y1, &y2);

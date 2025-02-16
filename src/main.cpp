@@ -30,6 +30,14 @@ double calculateAngle(int xc, int yc, int xm, int ym){
 
     return angleRadians + 0.5*M_PI;
 }
+void getPointInDirection(int playerX, int playerY, int mouseX, int mouseY, int distance, int& targetX, int& targetY) {
+    // Calculate the angle toward the mouse
+    double angle = atan2(mouseY - playerY, mouseX - playerX);
+
+    // Find new point that is `distance` units away
+    targetX = playerX + distance * cos(angle);
+    targetY = playerY + distance * sin(angle);
+}
 
 int main() {
     // entity.displayMessage();  
@@ -48,7 +56,7 @@ int main() {
 
     // Create SDL window
     SDL_Window* window = SDL_CreateWindow(
-        "Bruh game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        "Dungeon Crawler game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN
     );
     if (!window) {
@@ -113,14 +121,34 @@ int main() {
     // Position the text
     SDL_Rect textRect = {20, 20, textWidth, textHeight}; // Top-left corner at (20, 20)
 
-
+    int frameCount = 0;
+    float fps = 0.0f;
+    Uint32 lastTime = SDL_GetTicks(); //fps
+    
     // Main loop
     bool isRunning = true;
     SDL_Event event;
     //player and mob starting positions and initializers
-    Player player(500, 500, 20);
-    Mob mob1(200, 150, 10);
-    Wall wall1(300, 200, 10);
+    Player* player = new Player(500, 500, 20);
+    Mob* mob1 = new Mob(200, 150, 10);
+    Wall* wall1 = new Wall(300, 200, 10);
+    std::vector<std::array<int, 4>> hitboxes(3); // Hardcoded for 3 entities
+    std::vector<Entity*> entityList(3); // Second list with object pointers
+    // Spawn Entities
+    // Player player(500, 500, 20);
+    // Mob mob1(200, 150, 10);
+    // Wall wall1(300, 200, 10);
+    
+    // Populate the hitbox (placeholder) for each entity
+
+    // Associate entities with hitboxes using pointers (hacky way yet to be changed but it is what it is)
+    entityList[0] = player;
+    entityList[1] = mob1;
+    entityList[2] = wall1;
+    // Call setPosition to ensure hitboxes are updated
+    player->setPosition(player->getXPos(), player->getYPos(), entityList);
+    mob1->setPosition(mob1->getXPos(), mob1->getYPos(), entityList);
+    wall1->setPosition(wall1->getXPos(), wall1->getYPos(), entityList);
 
     bool wKeyPressed = false;
     bool sKeyPressed = false;
@@ -129,8 +157,18 @@ int main() {
 
     float normalSpeed = 3.0f;
     float diagonalSpeed = normalSpeed * 0.70711f;
+    Uint32 currentTime; //fps
 
     while (isRunning) { // main loop
+        //fps 
+        currentTime = SDL_GetTicks();
+        frameCount++;
+        if (currentTime > lastTime + 1000) {
+            fps = frameCount * 1000.0f / (currentTime - lastTime);
+            lastTime = currentTime;
+            frameCount = 0;
+        }
+
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) isRunning = false;
             
@@ -154,10 +192,14 @@ int main() {
         
         float moveSpeed = (wKeyPressed || sKeyPressed) && (aKeyPressed || dKeyPressed) ? diagonalSpeed : normalSpeed;
         
-        if (wKeyPressed) player.setPosition(player.getXPos(), player.getYPos() - (int)std::round(moveSpeed));
-        if (aKeyPressed) player.setPosition(player.getXPos() - (int)std::round(moveSpeed), player.getYPos());
-        if (sKeyPressed) player.setPosition(player.getXPos(), player.getYPos() + (int)std::round(moveSpeed));
-        if (dKeyPressed) player.setPosition(player.getXPos() + (int)std::round(moveSpeed), player.getYPos());
+        if (wKeyPressed) player->setPosition(player->getXPos(), player->getYPos() - (int)std::round(moveSpeed), entityList);
+        if (aKeyPressed) player->setPosition(player->getXPos() - (int)std::round(moveSpeed), player->getYPos(), entityList);
+        if (sKeyPressed) player->setPosition(player->getXPos(), player->getYPos() + (int)std::round(moveSpeed), entityList);
+        if (dKeyPressed) player->setPosition(player->getXPos() + (int)std::round(moveSpeed), player->getYPos(), entityList);
+
+        //DELETE LATER ITS TEMP
+
+        
 
         // Clear the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
@@ -177,15 +219,28 @@ int main() {
         SDL_RenderDrawPoint(renderer, mouseX, mouseY);
             
         // get the angle for drawing
-        double angle = calculateAngle(player.getXPos(), player.getYPos(), mouseX, mouseY);
+        double angle = calculateAngle(player->getXPos(), player->getYPos(), mouseX, mouseY);
 
 
 
         //rendering all the mobs (should be a function later! TODO)
-        player.draw(renderer, angle);
-        mob1.draw(renderer);
-        wall1.draw(renderer);
-        // wall1.draw(renderer, angle);
+        player->draw(renderer, angle);
+        // if(mob1){
+        //     mob1->draw(renderer);
+        // }
+        if(mob1){
+            if(mob1->hp <= 0){
+                // vector.erase(vector.begin() + index);
+
+                entityList[1] = NULL;
+                delete mob1;
+                mob1 = NULL;
+            }else{
+                mob1->draw(renderer);
+            }
+        }
+        wall1->draw(renderer);
+        // wall1->draw(renderer, angle);
 
 // REMOVE-------------------------------------
         // Draw a single pixel
@@ -193,11 +248,23 @@ int main() {
         SDL_RenderDrawPoint(renderer, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2); // Pixel at center of screen
 // REMOVE-------------------------------------
 
-        // Present the updated screen
-        SDL_RenderPresent(renderer);
-        SDL_Delay(16); // Limit to ~60 FPS
-    }
+        std::string fpsText = "FPS: " + std::to_string((int)fps);
+        SDL_Surface* fpsSurface = TTF_RenderText_Solid(font, fpsText.c_str(), textColor);
+        SDL_Texture* fpsTexture = SDL_CreateTextureFromSurface(renderer, fpsSurface);
 
+        SDL_Rect fpsRect = {SCREEN_WIDTH - fpsSurface->w - 20, 20, fpsSurface->w, fpsSurface->h};
+        SDL_RenderCopy(renderer, fpsTexture, NULL, &fpsRect);
+
+        SDL_FreeSurface(fpsSurface);
+        SDL_DestroyTexture(fpsTexture);
+
+        SDL_RenderPresent(renderer);
+
+        Uint32 frameTime = SDL_GetTicks() - currentTime;
+        if (frameTime < 33) {
+            SDL_Delay(33 - frameTime);
+        }
+    }
     // Cleanup
 
     TTF_CloseFont(font);

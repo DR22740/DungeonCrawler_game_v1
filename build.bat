@@ -43,7 +43,11 @@ if %errorlevel% neq 0 (
     echo Error compiling graphics.cpp
     exit /b 1
 )
-
+g++ -std=c++17 -c %srcdir%\Projectile.cpp -o %objdir%\Projectile.o %SDLinclude%
+if %errorlevel% neq 0 (
+    echo Error compiling main.cpp
+    exit /b 1
+)
 :: Compile main.cpp
 g++ -std=c++17 -c %srcdir%\main.cpp -o %objdir%\main.o %SDLinclude%
 if %errorlevel% neq 0 (
@@ -52,7 +56,7 @@ if %errorlevel% neq 0 (
 )
 
 :: Link the program
-g++ %objdir%\main.o %objdir%\graphics.o %objdir%\Entity.o %objdir%\Player.o %objdir%\Mob.o %objdir%\Wall.o -o main.exe %SDLlib% %SDLinclude%
+g++ %objdir%\main.o %objdir%\graphics.o %objdir%\Projectile.o %objdir%\Entity.o %objdir%\Player.o %objdir%\Mob.o %objdir%\Wall.o -o main.exe %SDLlib% %SDLinclude%
 if %errorlevel% neq 0 (
     echo Error linking the program
     exit /b 1

@@ -12,6 +12,7 @@ public:
     
     void draw(SDL_Renderer* renderer, double angle) const;  // Overloaded version
 private:
+    void collisionLogic(Entity* collidedEntity) override; // Override collision logic
     void draw(SDL_Renderer* renderer) const override;  // Overrides Entity
 };
 

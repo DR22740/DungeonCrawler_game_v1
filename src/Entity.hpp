@@ -7,20 +7,24 @@
 #include <iostream>
 #include "graphics.hpp"
 #include <array>
+#include <vector>
 class Entity {
-protected:
-    int x, y; // Position
-    int width, height; // Size
-    Uint8 r, g, b, a; // Color
+    protected:
+        int x, y; // Position
+        int width, height; // Size
+        Uint8 r, g, b, a; // Color
 
-public:
-    Entity(int x, int y, int width, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
-    int getXPos() const;
-    int getYPos() const;
-    void setPosition(int newX, int newY);
-    virtual void draw(SDL_Renderer* renderer) const {}
-    std::array<int, 4> calculateHitbox(int x, int y, int width);
-    virtual ~Entity() {}
+    public:
+        int hp, dmg;
+        std::array<int, 4> hitbox;
+        Entity(int x, int y, int hp, int dmg, int width, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+        int getXPos() const;
+        int getYPos() const;
+        void setPosition(int newX, int newY, std::vector<Entity*>& entityList);
+        virtual void collisionLogic(Entity* collidedEntity); 
+        virtual void draw(SDL_Renderer* renderer) const {}
+        virtual std::array<int, 4> calculateHitbox() const;
+        virtual ~Entity() {}
 };
 
 #endif // ENTITY_HPP
