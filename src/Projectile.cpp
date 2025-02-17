@@ -2,7 +2,7 @@
 #include "Projectile.hpp"
 
                                                         //x, y, width, hp, dmg, colors RGBA
-Projectile::Projectile(int x, int y, int width, bool aggroed, int dx, int dy) : Entity(x, y, width, 30, 30, 255, 0, 0, 255), aggroed(aggroed), dx(dx), dy(dy) {}
+Projectile::Projectile(int x, int y, int width, bool aggroed, int dx, int dy) : Entity(x, y, width, 60, 30, 255, 0, 0, 255), aggroed(aggroed), dx(dx), dy(dy) {}
 
 void Projectile::draw(SDL_Renderer* renderer) const {
     SDL_SetRenderDrawColor(renderer, r, g, b, a);
@@ -50,7 +50,7 @@ void Projectile::setPosition(int newX, int newY, std::vector<Entity*>& entityLis
 void Projectile::collisionLogic(Entity* collidedEntity) {
     collidedEntity->hp -= this->dmg;  // Use melee damage instead of base damage
     std::cout << "Projectile colided " << std::endl;
-    this->hp = this->hp - 30;
+    this->hp = this->hp - 60;
 }
 std::array<int, 4> Projectile::calculateHitbox() const {
 

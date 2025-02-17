@@ -39,7 +39,72 @@ void getPointInDirection(int playerX, int playerY, int mouseX, int mouseY, int d
     targetX = playerX + distance * cos(angle);
     targetY = playerY + distance * sin(angle);
 }
+#define aggroRangeMult 200
+void handleMobProjectile(SDL_Renderer* renderer, Mob*& mob, Projectile*& projectile, Player* player, std::vector<Entity*>& entityList, int entityIndex) {
+    if (mob) {
+        // Spawn projectile if it does not exist
+        if (!projectile) {
+            std::cout << "Spawning projectile for mob at (" << mob->getXPos() << ", " << mob->getYPos() << ")" << std::endl;
+            projectile = new Projectile(mob->getXPos(), mob->getYPos(), 6, false, 0, 0);
+        }
 
+        // If mob dies, delete it and remove from entity list
+        if (mob->hp <= 0) {
+            std::cout << "Deleting mob at index " << entityIndex << std::endl;
+            delete mob;
+            mob = nullptr;
+            entityList[entityIndex] = nullptr;  // Clear from entity list
+        } else {
+            mob->draw(renderer);
+        }
+
+        // Handle projectile movement
+        if (projectile && mob) {
+
+
+            // Check if player is in aggro range
+            if (player->getXPos() >= (entityList[entityIndex]->hitbox[0]) - aggroRangeMult &&
+                player->getXPos() <= (entityList[entityIndex]->hitbox[2]) + aggroRangeMult &&
+                player->getYPos() >= (entityList[entityIndex]->hitbox[1]) - aggroRangeMult &&
+                player->getYPos() <= (entityList[entityIndex]->hitbox[3]) + aggroRangeMult &&
+                !projectile->aggroed) {
+                
+                std::cout << "Player entered aggro range!" << std::endl;
+                projectile->aggroed = true;
+
+                // Compute movement vector
+                float diffX = player->getXPos() - projectile->getXPos();
+                float diffY = player->getYPos() - projectile->getYPos();
+                float distance = std::sqrt(diffX * diffX + diffY * diffY);
+
+                float baseSpeed = 1.5f;
+                float scalingFactor = std::max(distance / 20.0f, baseSpeed); // Ensure minimum speed
+
+                // Normalize direction vector
+                if (distance > 0) {
+                    projectile->dx = std::round((diffX / distance) * scalingFactor);
+                    projectile->dy = std::round((diffY / distance) * scalingFactor);
+                }
+            }
+        }
+    }
+
+    // Handle projectile movement
+    if (projectile) {
+        projectile->setPosition(projectile->getXPos() + projectile->dx, 
+                                projectile->getYPos() + projectile->dy, 
+                                entityList, entityIndex);
+
+        // Delete projectile if it runs out of HP
+        if (projectile->hp <= 0) {
+            std::cout << "Deleting projectile" << std::endl;
+            delete projectile;
+            projectile = nullptr;
+        } else {
+            projectile->draw(renderer);
+        }
+    }
+}
 int main() {
     // entity.displayMessage();  
     // Initialize SDL
@@ -129,66 +194,118 @@ int main() {
     // Main loop
     bool isRunning = true;
     SDL_Event event;
-    //==============================================================================================
-    //---------------------------SPAWNING ALL THE STUFF HERE-----------------------------------------
-    //==============================================================================================
-    //player and mob starting positions and initializers
-    Player* player = new Player(500, 500, 20);
-    Mob* mob1 = new Mob(200, 150, 10);
-    Wall* wall1 = new Wall(300, 200, 30);
-    Wall* wall2 = new Wall(40, 40, 30);
-    Wall* wall3 = new Wall(40, 80, 30);
-    Wall* wall4 = new Wall(40, 120, 30);
-    Wall* wall5 = new Wall(40, 160, 30);
-    Wall* wall6 = new Wall(40, 200, 30);
-    Wall* wall7 = new Wall(40, 240, 30);
-    Wall* wall8 = new Wall(40, 280, 30);
-    Wall* wall9 = new Wall(40, 320, 30);
-    Wall* wall10 = new Wall(40, 360, 30);
-    Wall* wall11 = new Wall(40, 400, 30);
-    Projectile* projectile1 = nullptr;
-    // std::vector<std::array<int, 4>> hitboxes(4); // Hardcoded for 3 entities
-    std::vector<Entity*> entityList(13); // Second list with object pointers
-    // Spawn Entities
-    // Player player(500, 500, 20);
-    // Mob mob1(200, 150, 10);
-    // Wall wall1(300, 200, 10);
-    
-    // Populate the hitbox (placeholder) for each entity
+//==============================================================================================
+//---------------------------SPAWNING ALL THE STUFF HERE-----------------------------------------
+//==============================================================================================
+Player* player = new Player(500, 500, 20);
+Mob* mob1 = new Mob(200, 80, 10);
+Mob* mob2 = new Mob(200, 240, 10);
+Mob* mob3 = new Mob(200, 400, 10);
+Mob* mob4 = new Mob(200, 560, 10);
+Mob* mob5 = new Mob(200, 720, 10);
+Mob* mob6 = new Mob(200, 880, 10);
+Mob* mob7 = new Mob(1200, 80, 10);
+Mob* mob8 = new Mob(1200, 240, 10);
+Mob* mob9 = new Mob(1200, 400, 10);
+Mob* mob10 = new Mob(1200, 560, 10);
+Mob* mob11 = new Mob(1200, 720, 10);
+Mob* mob12 = new Mob(350, 80, 10);
+Mob* mob13 = new Mob(500, 80, 10);
+Mob* mob14 = new Mob(650, 80, 10);
+Mob* mob15 = new Mob(800, 80, 10);
+Mob* mob16 = new Mob(950, 80, 10);
+Mob* mob17 = new Mob(1200, 580, 10);
+Mob* mob18 = new Mob(1200, 440, 10);
+Mob* mob19 = new Mob(1200, 300, 10);
+Mob* mob20 = new Mob(1200, 160, 10);
 
-    // Associate entities with hitboxes using pointers (hacky way yet to be changed but it is what it is)
-    entityList[0] = player;
-    entityList[1] = mob1;
-    //we dont input the projectile1 since it has no hitbox
-    entityList[2] = wall1;
-    entityList[3] = wall2;
-    entityList[4] = wall3;
-    entityList[5] = wall4;
-    entityList[6] = wall5;
-    entityList[7] = wall6;
-    entityList[8] = wall7;
-    entityList[9] = wall8;
-    entityList[10] = wall9;
-    entityList[11] = wall10;
-    entityList[12] = wall11;
-    // Call setPosition to ensure hitboxes are updated
-    player->setPosition(player->getXPos(), player->getYPos(), entityList);
-    mob1->setPosition(mob1->getXPos(), mob1->getYPos(), entityList);
-    wall1->setPosition(wall1->getXPos(), wall1->getYPos(), entityList);
-    wall2->setPosition(wall2->getXPos(), wall2->getYPos(), entityList);
-    wall3->setPosition(wall3->getXPos(), wall3->getYPos(), entityList);
-    wall4->setPosition(wall4->getXPos(), wall4->getYPos(), entityList);
-    wall5->setPosition(wall5->getXPos(), wall5->getYPos(), entityList);
-    wall6->setPosition(wall6->getXPos(), wall6->getYPos(), entityList);
-    wall7->setPosition(wall7->getXPos(), wall7->getYPos(), entityList);
-    wall8->setPosition(wall8->getXPos(), wall8->getYPos(), entityList);
-    wall9->setPosition(wall9->getXPos(), wall9->getYPos(), entityList);
-    wall10->setPosition(wall10->getXPos(), wall10->getYPos(), entityList);
-    wall11->setPosition(wall11->getXPos(), wall11->getYPos(), entityList);
+Projectile* projectile1 = nullptr;
+Projectile* projectile2 = nullptr;
+Projectile* projectile3 = nullptr;
+Projectile* projectile4 = nullptr;
+Projectile* projectile5 = nullptr;
+Projectile* projectile6 = nullptr;
+Projectile* projectile7 = nullptr;
+Projectile* projectile8 = nullptr;
+Projectile* projectile9 = nullptr;
+Projectile* projectile10 = nullptr;
+Projectile* projectile11 = nullptr;
+Projectile* projectile12 = nullptr;
+Projectile* projectile13 = nullptr;
+Projectile* projectile14 = nullptr;
+Projectile* projectile15 = nullptr;
+Projectile* projectile16 = nullptr;
+Projectile* projectile17 = nullptr;
+Projectile* projectile18 = nullptr;
+Projectile* projectile19 = nullptr;
+Projectile* projectile20 = nullptr;
 
-    //==============================================================================================
-    //------------------------END OF SPAWNING ALL THE STUFF HERE-------------------------------------
-    //==============================================================================================
+
+// Vector to hold all walls
+// std::vector<Wall*> walls;
+std::vector<Entity*> entityList;
+
+// Add player and mob to entity list
+entityList.push_back(player);
+entityList.push_back(mob1);
+entityList.push_back(mob2);
+entityList.push_back(mob3);
+entityList.push_back(mob4);
+entityList.push_back(mob5);
+entityList.push_back(mob6);
+entityList.push_back(mob7);
+entityList.push_back(mob8);
+entityList.push_back(mob9);
+entityList.push_back(mob10);
+entityList.push_back(mob11);
+entityList.push_back(mob12);
+entityList.push_back(mob13);
+entityList.push_back(mob14);
+entityList.push_back(mob15);
+entityList.push_back(mob16);
+entityList.push_back(mob17);
+entityList.push_back(mob18);
+entityList.push_back(mob19);
+entityList.push_back(mob20);
+
+// // Define wall spacing and boundaries
+// const int wallSpacing = 40;
+
+
+// const int margin = 40;    // Margin from the border
+// const int step = 40; 
+// // Generate walls surrounding the player
+// for (int x = margin; x <= SCREEN_WIDTH - margin; x += step) {
+//     if (x > margin + step && x < SCREEN_WIDTH - margin - step) {  // Leave corners empty
+//         walls.push_back(new Wall(x, margin, 30));  // Top border
+//         walls.push_back(new Wall(x, SCREEN_HEIGHT - margin, 30));  // Bottom border
+//     }
+// }
+
+// // Place walls along the left and right borders
+// for (int y = margin; y <= SCREEN_HEIGHT - margin; y += step) {
+//     if (y > margin + step && y < SCREEN_HEIGHT - margin - step) {  // Leave corners empty
+//         walls.push_back(new Wall(margin, y, 30));  // Left border
+//         walls.push_back(new Wall(SCREEN_WIDTH - margin, y, 30));  // Right border
+//     }
+// }
+
+// for (Wall* wall : walls) {
+//     entityList.push_back(wall);
+// }
+
+// Update hitboxes
+player->setPosition(player->getXPos(), player->getYPos(), entityList);
+mob1->setPosition(mob1->getXPos(), mob1->getYPos(), entityList);
+mob2->setPosition(mob2->getXPos(), mob2->getYPos(), entityList);
+// for (Wall* wall : walls) {
+//     wall->setPosition(wall->getXPos(), wall->getYPos(), entityList);
+// }
+
+//==============================================================================================
+//------------------------END OF SPAWNING ALL THE STUFF HERE-------------------------------------
+//==============================================================================================
+
     bool wKeyPressed = false;
     bool sKeyPressed = false;
     bool aKeyPressed = false;
@@ -297,11 +414,11 @@ int main() {
         // if(mob1){
         //     mob1->draw(renderer);
         // }
-        #define aggroRangeMult 200
+        
         if(mob1){
             if (!projectile1) {  // Check if the projectile was not created yet
                 std::cout << "we be spawning projectile" << std::endl;
-                projectile1 = new Projectile(200, 150, 6, false, 0, 0);
+                projectile1 = new Projectile(200, 80, 6, false, 0, 0);
             }
             if(mob1->hp <= 0){
                 // vector.erase(vector.begin() + index);
@@ -356,18 +473,30 @@ int main() {
             }
         }
 
+        handleMobProjectile(renderer, mob2, projectile2, player, entityList, 2);
+        handleMobProjectile(renderer, mob3, projectile3, player, entityList, 3);
+        handleMobProjectile(renderer, mob4, projectile4, player, entityList, 4);
+        handleMobProjectile(renderer, mob5, projectile5, player, entityList, 5);
+        handleMobProjectile(renderer, mob6, projectile6, player, entityList, 6);
+        handleMobProjectile(renderer, mob7, projectile7, player, entityList, 7);
+        handleMobProjectile(renderer, mob8, projectile8, player, entityList, 8);
+        handleMobProjectile(renderer, mob9, projectile9, player, entityList, 9);
+        handleMobProjectile(renderer, mob10, projectile10, player, entityList, 10);
+        handleMobProjectile(renderer, mob11, projectile11, player, entityList, 11);
+        handleMobProjectile(renderer, mob12, projectile12, player, entityList, 12);
+        handleMobProjectile(renderer, mob13, projectile13, player, entityList, 13);
+        handleMobProjectile(renderer, mob14, projectile14, player, entityList, 14);
+        handleMobProjectile(renderer, mob15, projectile15, player, entityList, 15);
+        handleMobProjectile(renderer, mob16, projectile16, player, entityList, 16);
+        handleMobProjectile(renderer, mob17, projectile17, player, entityList, 17);
+        handleMobProjectile(renderer, mob18, projectile18, player, entityList, 18);
+        handleMobProjectile(renderer, mob19, projectile19, player, entityList, 19);
+        handleMobProjectile(renderer, mob20, projectile20, player, entityList, 20);
+        
 
-        wall1->draw(renderer);
-        wall2->draw(renderer);
-        wall3->draw(renderer);
-        wall4->draw(renderer);
-        wall5->draw(renderer);
-        wall6->draw(renderer);
-        wall7->draw(renderer);
-        wall8->draw(renderer);
-        wall9->draw(renderer);
-        wall10->draw(renderer);
-        wall11->draw(renderer);
+        // for (Wall* wall : walls) {
+        //     wall->draw(renderer);
+        // }
 
         // wall1->draw(renderer, angle);
 
@@ -390,8 +519,8 @@ int main() {
         SDL_RenderPresent(renderer);
 
         Uint32 frameTime = SDL_GetTicks() - currentTime;
-        if (frameTime < 33) {
-            SDL_Delay(33 - frameTime);
+        if (frameTime < 16) {//do 16 for 60 fps and 33 for 30
+            SDL_Delay(16 - frameTime);
         }
     }
     // Cleanup
