@@ -132,6 +132,7 @@ void drawTriangleWithThreePoints(SDL_Renderer* renderer, int x1, int y1, int x2,
         drawVerticalLine(renderer, (int)startY, (int)endY, x);
     }
 }
+
 void drawVisionTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defCY, double angle, int length){
 
     int defBLX = defCX - objSize/3;

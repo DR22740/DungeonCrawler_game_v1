@@ -19,5 +19,5 @@ void drawVisionTriangle(SDL_Renderer* renderer, int objSize, int defCX, int defC
 void drawTriangle(SDL_Renderer* renderer, int objSize, int x, int y, double angle, int length, bool right);
 // void drawWallHorizontal(SDL_Renderer* renderer, int x, int y, int length);
 // void drawWallVertical(SDL_Renderer* renderer, int x, int y, int length);
-
+//add a function that would instead of drawing a pixel - it would check if the pixel in the allowed range and THEN draw it
 #endif // GRAPHICS_HPP

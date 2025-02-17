@@ -20,7 +20,7 @@ class Entity {
         Entity(int x, int y, int hp, int dmg, int width, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
         int getXPos() const;
         int getYPos() const;
-        void setPosition(int newX, int newY, std::vector<Entity*>& entityList);
+        virtual void setPosition(int newX, int newY, std::vector<Entity*>& entityList);
         virtual void collisionLogic(Entity* collidedEntity); 
         virtual void draw(SDL_Renderer* renderer) const {}
         virtual std::array<int, 4> calculateHitbox() const;
