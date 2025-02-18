@@ -219,6 +219,19 @@ Mob* mob18 = new Mob(1200, 440, 10);
 Mob* mob19 = new Mob(1200, 300, 10);
 Mob* mob20 = new Mob(1200, 160, 10);
 
+
+Wall* wall1 = new Wall(100, 700, 10);
+Wall* wall2 = new Wall(1100, 500, 10);
+Wall* wall3 = new Wall(600, 600, 10);
+Wall* wall4 = new Wall(300, 750, 10);
+Wall* wall5 = new Wall(900, 350, 10);
+Wall* wall6 = new Wall(750, 900, 10);
+Wall* wall7 = new Wall(400, 550, 10);
+Wall* wall8 = new Wall(1100, 750, 10);
+Wall* wall9 = new Wall(500, 350, 10);
+Wall* wall10 = new Wall(1000, 650, 10);
+
+
 Projectile* projectile1 = nullptr;
 Projectile* projectile2 = nullptr;
 Projectile* projectile3 = nullptr;
@@ -267,6 +280,17 @@ entityList.push_back(mob17);
 entityList.push_back(mob18);
 entityList.push_back(mob19);
 entityList.push_back(mob20);
+
+entityList.push_back(wall1);
+entityList.push_back(wall2);
+entityList.push_back(wall3);
+entityList.push_back(wall4);
+entityList.push_back(wall5);
+entityList.push_back(wall6);
+entityList.push_back(wall7);
+entityList.push_back(wall8);
+entityList.push_back(wall9);
+entityList.push_back(wall10);
 
 // // Define wall spacing and boundaries
 // const int wallSpacing = 40;
@@ -499,6 +523,17 @@ mob2->setPosition(mob2->getXPos(), mob2->getYPos(), entityList);
         // }
 
         // wall1->draw(renderer, angle);
+        wall1->draw(renderer);
+        wall2->draw(renderer);
+        wall3->draw(renderer);
+        wall4->draw(renderer);
+        wall5->draw(renderer);
+        wall6->draw(renderer);
+        wall7->draw(renderer);
+        wall8->draw(renderer);
+        wall9->draw(renderer);
+        wall10->draw(renderer);
+        
 
 // REMOVE-------------------------------------
         // Draw a single pixel
